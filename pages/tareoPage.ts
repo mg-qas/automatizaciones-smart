@@ -29,6 +29,9 @@ export class TareoPage {
   readonly btnAceptar: Locator;
   readonly btnCancelar: Locator;
   readonly btnClose: Locator;
+  readonly btnPausar: Locator;
+  readonly txtMotivoTardanza: Locator;
+readonly btnAceptarTardanza: Locator;
 
   // Locators para la limpieza de Comboboxes (Botones Close)
   readonly btnClearProyecto: Locator;
@@ -39,6 +42,28 @@ export class TareoPage {
   constructor(page: Page) {
     this.page = page;
     this.calendar = new CalendarComponent(page);
+    // Se agrega el nuevo boton de pausar o
+    //this.btnPausar=page.locator('header button, nav button').first();
+    //this.btnPausar = page.locator('button').filter({ hasText: /Pausar/i });
+    //this.btnPausar = page.locator('*:has-text("pause_circle")').first();
+   //this.btnPausar = page.locator('mg-toolbar').locator('*:has-text("play_circle"), *:has-text("pause_circle")').first();
+   /*this.btnPausar = page
+  .locator('mg-toolbar')
+  .filter({ hasText: /Pausar|Reanudar|Iniciar|Detener/i })
+  .first();*/
+  /*this.btnPausar = page
+  .locator('mg-toolbar')//.getByRole('button',{name: /Pausar/i})
+  .getByText(/Pausar/i)
+  .first();*/
+  this.btnPausar = page
+  .locator('mg-toolbar')
+  .getByText(/pause_circle|play_circle|stop_circle/i)
+  .first();
+
+  this.txtMotivoTardanza = page.getByRole('textbox', { name: 'Ingrese motivo de tardanza' });
+  this.btnAceptarTardanza = page.getByRole('button', { name: 'Aceptar' });
+  
+
 
     this.btnRegistrarActividadInicial = page.locator('button').filter({ hasText: /registrar actividad/i });
     this.btnAgregarActividad = page.getByRole('button', { name: /agregar actividad/i });
@@ -89,6 +114,108 @@ export class TareoPage {
     const horas = (await fila.locator('td.cdk-column-bgAmount').innerText()).trim();
     return { fecha, horas };
   }
+
+    /*
+    Extrae automáticamente todos los IDs presentes en la tabla actualmente visible.
+   */
+async obtenerIdsVisiblesEnTabla(): Promise<number[]> {
+    const celdasId = this.page.locator('td.cdk-column-nId');
+    // Espera a que la primera celda cargue
+    await celdasId.first().waitFor({ state: 'visible', timeout: 10000 });
+
+    const textosId = await celdasId.allInnerTexts();
+    return textosId
+      .map(id => Number(id.trim()))
+      .filter(id => !isNaN(id) && id > 0);
+  }
+
+  //FUNCION PARA QUE PUEDA REALIZAR E IDENTIFICAR EL BOTON PARA DARLE CLICK
+ /*async gestionarBotonCronometro(): Promise<string> {
+   await expect(this.btnPausar).toBeVisible({ timeout: 5000 });
+   
+
+   const estaHabilitado = await this.btnPausar.isEnabled();
+
+   if (estaHabilitado) {
+    const textoActual = (await this.btnPausar.innerText()).trim();
+    await this.btnPausar.click();
+    return `Acción ejecutada: Clic en botón (${textoActual})`;
+   } else {
+    console.warn("El botón de control de tiempo está deshabilitado.");
+    return "boton deshabilitado";
+   }
+}*/
+/*async gestionarBotonCronometro(): Promise<string> {
+  // 1. Verifica si el botón del toolbar está presente en pantalla
+  const estaVisible = await this.btnPausar.isVisible({ timeout: 5000 }).catch(() => false);
+
+  if (!estaVisible) {
+    console.warn(" El botón del cronómetro no se encuentra disponible en la barra superior.");
+    return "boton deshabilitado";
+  }
+
+  // 2. Comprueba si está habilitado para hacer clic
+  const estaHabilitado = await this.btnPausar.isEnabled();
+
+  if (estaHabilitado) {
+    const textoActual = (await this.btnPausar.innerText()).replace(/\n/g, ' ').trim();
+    await this.btnPausar.click();
+    return `Acción ejecutada con éxito: Clic en [${textoActual}]`;
+  } else {
+    console.warn(" El botón se encuentra deshabilitado en este momento.");
+    return "boton deshabilitado";
+  }
+}  */
+
+  async gestionarBotonCronometro(): Promise<string> {
+  // 1. Verifica si el botón del toolbar está presente en pantalla
+  const estaVisible = await this.btnPausar.isVisible({ timeout: 5000 }).catch(() => false);
+
+  if (!estaVisible) {
+    console.warn(" El botón del cronómetro no se encuentra disponible en la barra superior.");
+    return "boton deshabilitado";
+  }
+
+  // 2. Comprueba si está habilitado para hacer clic
+  const estaHabilitado = await this.btnPausar.isEnabled();
+
+  if (estaHabilitado) {
+    const textoActual = (await this.btnPausar.innerText()).replace(/\n/g, ' ').trim();
+    
+    // Ejecuta el clic en el botón del cronómetro
+    await this.btnPausar.click();
+
+    // 3. Evalúa si se despliega el modal de tardanza (espera hasta 3 segundos)
+    const apareceModalTardanza = await this.txtMotivoTardanza
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
+
+    if (apareceModalTardanza) {
+      // Ingresa el motivo y confirma la acción
+      await this.txtMotivoTardanza.fill('Ingrese tarde porque le pregunte a mis hvos y dijeron Simon');
+      await this.btnAceptarTardanza.click();
+
+      // Espera a que el modal se cierre antes de continuar
+      await expect(this.txtMotivoTardanza).toBeHidden();
+
+      return `Acción ejecutada con éxito: Clic en [${textoActual}] (Tardanza justificada)`;
+    }
+
+    return `Acción ejecutada con éxito: Clic en [${textoActual}]`;
+  } else {
+    console.warn(" El botón se encuentra deshabilitado en este momento.");
+    return "boton deshabilitado";
+  }
+}
+
+
+
+
+
+
+
+
+
 
   // ---------------------------------------------------------------------------
   // MÉTODOS DE ACCIÓN Y FORMULARIO
@@ -145,6 +272,7 @@ export class TareoPage {
     await this.page.getByRole('option', { name: item.requerimiento }).click();
 
     // 4. Categoría
+     await this.cboCategoria.hover(); // Coloca el mouse sobre el desplegable para activar las reglas CSS (:hover)
     if (await this.btnClearCategoria.isVisible()) {
       await this.btnClearCategoria.click();
     }
@@ -246,6 +374,8 @@ export class TareoPage {
     }
   }*/
 
+
+    /*
   async eliminarTareo(id: number[]): Promise<TareoEliminado[]> {
     const datosEliminados: TareoEliminado[] = [];
 
@@ -260,6 +390,34 @@ export class TareoPage {
     }
     return datosEliminados;
   }
+
+  */
+
+  //eliminar tareo masivo actualizado
+ async eliminarTareo(id?: number[]): Promise<TareoEliminado[]> {
+    const datosEliminados: TareoEliminado[] = [];
+    
+    // Para asi no colocarlo de forma manual los ID's, captura automáticamente desde la página
+    const idsAEliminar = (id && id.length > 0) 
+      ? id 
+      : await this.obtenerIdsVisiblesEnTabla();
+
+    for (const id_ of idsAEliminar) {
+      const fila = this.recuperarFila(id_);
+      datosEliminados.push(await this.recuperarFechaYHora(fila));
+      await fila
+        .locator('td.cdk-column-icEliminarTarea')
+        .locator('div.cursor-pointer')
+        .click();
+      await this.aceptar();
+    }
+    
+    return datosEliminados;
+  }
+
+
+
+
 
   async duplicarTareo(item: TareoData, id: number[], actualizar: boolean = false) {
     for (const [index, id_] of id.entries()) {

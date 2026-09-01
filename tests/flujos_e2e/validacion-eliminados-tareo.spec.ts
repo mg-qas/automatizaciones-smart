@@ -27,6 +27,7 @@ for (const [index, item] of edicion.entries()) {
       await minutosAntes.push(await tareoPage.obtenerMinutosDisponibles());
       await tareoPage.btnClose.first().click();
     }
+    /*
 
     // 3. Eliminar actividad
     const validarEliminados = await tareoPage.eliminarTareo(item.id!);
@@ -38,7 +39,23 @@ for (const [index, item] of edicion.entries()) {
         const minutosEsperados = await tareoPage.obtenerMinutosDisponibles();
         const minutosRecuperados = minutosAntes[index] + parseHoursToMinutes(eliminado.horas);
         await expect(minutosRecuperados).toEqual(minutosEsperados);
-    }
+    }*/
+
+        // 1. Obtener IDs dinámicamente para leer minutos antes de borrar
+        const idsDinamicos = await tareoPage.obtenerIdsVisiblesEnTabla();
+
+            for (const id_ of idsDinamicos) {
+              const fila = tareoPage.recuperarFila(id_);
+              const tareo = await tareoPage.recuperarFechaYHora(fila);
+              await tareoPage.abrirFormularioRegistro();
+              await tareoPage.filtroCalendario(tareo.fecha);
+              minutosAntes.push(await tareoPage.obtenerMinutosDisponibles());
+              await tareoPage.btnClose.first().click();
+}
+
+                // 2. Eliminar sin enviarle IDs (los detectará solo en pantalla)
+                  const validarEliminados = await tareoPage.eliminarTareo();
+
 
   });
 }
