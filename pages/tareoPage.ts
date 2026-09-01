@@ -272,7 +272,7 @@ async obtenerIdsVisiblesEnTabla(): Promise<number[]> {
     await this.page.getByRole('option', { name: item.requerimiento }).click();
 
     // 4. Categoría
-     await this.cboCategoria.hover(); // Coloca el mouse sobre el desplegable para activar las reglas CSS (:hover)
+    await this.cboCategoria.hover(); // Coloca el mouse sobre el desplegable para activar las reglas CSS (:hover)
     if (await this.btnClearCategoria.isVisible()) {
       await this.btnClearCategoria.click();
     }

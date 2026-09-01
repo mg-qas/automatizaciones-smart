@@ -16,7 +16,7 @@ export class CrearMarcasFlow {
     const token = await this.obtenerToken(page);
 
     for(const tiempo of usuario.dTiempo_Marca){
-      const nIdUsuario = await this.usuarioRepository.obtenerIdPorCorreo(usuario.correo);
+      const { nIdUsuario } = await this.usuarioRepository.obtenerIdsPorCorreo(usuario.correo);
 
       await this.marcasService.crearMarca(
         token,
