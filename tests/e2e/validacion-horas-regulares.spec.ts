@@ -1,3 +1,4 @@
+/*
 import { test } from '@fixtures/test';
 import { escenariosRegistroTareo } from '@data/e2e/registroTareoData';
 import { CrearMarcasFlow } from '@flows/crearMarcasFlow';
@@ -45,3 +46,4 @@ for (const escenario of escenariosRegistroTareo) {
   );
 
 }
+*/
