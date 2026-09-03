@@ -111,9 +111,18 @@ export class TesoreriaPage {
    */
   private async seleccionarPersonas(personas: string[]) {
     for (const persona of personas) {
-      await this.seleccionarCombo.click();
-      await this.seleccionarOpcion(persona);
+      // Reintenta todo el bloque si falla (el panel se reposiciona al agregar chips)
+      await expect(async () => {
+        // Si el panel no está abierto, lo abrimos
+        const opcionesVisibles = await this.page.getByRole('option').first().isVisible().catch(() => false);
+        if (!opcionesVisibles) await this.seleccionarCombo.click(); // Abrir solo si está cerrado (evita el bug de doble-click que lo cierra)
+
+        const option = this.page.getByRole('option', { name: persona });
+        await option.scrollIntoViewIfNeeded(); // Asegura que la opción esté en el área visible del listado
+        await option.click();
+      }).toPass({ timeout: 15000 });
     }
+    await this.page.keyboard.press('Escape'); // Cierra el panel al terminar
   }
 
   /** Llena el formulario de GASTO POR ALIMENTACIÓN */
