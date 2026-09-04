@@ -35,11 +35,11 @@ export const TipoHora = {
 
 export const tareo: TareoData[] = [
     {
-        correo: "angelo.mogollon@materiagris.pe",
+        correo: "alfonso.rios@materiagris.pe",
         password: defaultPassword,
-        fecha: ['8 de julio de 2026'],
-        fechaInicio: '1 de julio de 2026',
-        minutosRegulares: "15",
+        fecha: ['2 de septiembre de 2026'],
+        fechaInicio: '2 de septiembre de 2026',
+        minutosRegulares: "476",
         proyecto: "PRY - MG (CARLOS)",
         requerimiento: "RQ - CAPACITACIONES INTERNAS",
         categoria: "ASEGURAMIENTO DE LA CALIDAD",
@@ -51,11 +51,11 @@ export const tareo: TareoData[] = [
 
 export const edicion: TareoData[] = [
     {
-        correo: "angelo.mogollon@materiagris.pe",
+        correo: "alfonso.rios@materiagris.pe",
         password: defaultPassword,
-        fecha: ['8 de julio de 2026'],
-        fechaInicio: '1 de julio de 2026',
-        fechaFin: '31 de julio de 2026',
+        fecha: ['2 de septiembre de 2026'],
+        fechaInicio: '1 de septiembre de 2026',
+        fechaFin: '3 de septiembre de 2026',
         minutosRegulares: "15",
         proyecto: "PRY - MG (CARLOS)",
         requerimiento: "RQ - CAPACITACIONES INTERNAS",
@@ -63,6 +63,6 @@ export const edicion: TareoData[] = [
         tipoHora: TipoHora.REGULAR,
         descripcion: "PRUEBAS DE AUTOMATIZACIÓN DE EDICIÓN EN QA",
         hora: "18:01",
-        id: [217569,217570,217571]
+       // id: [217569,217570,217571]
     }
 ];
