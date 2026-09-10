@@ -192,7 +192,7 @@ async obtenerIdsVisiblesEnTabla(): Promise<number[]> {
 
     if (apareceModalTardanza) {
       // Ingresa el motivo y confirma la acción
-      await this.txtMotivoTardanza.fill('Ingrese tarde porque le pregunte a mis hvos y dijeron Simon');
+      await this.txtMotivoTardanza.fill('Ingrese tarde porque le se me olvido marcar EQUISDE');
       await this.btnAceptarTardanza.click();
 
       // Espera a que el modal se cierre antes de continuar

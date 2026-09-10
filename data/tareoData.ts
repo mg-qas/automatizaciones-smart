@@ -10,13 +10,14 @@ export interface TareoData {
     fechaInicio: string;
     fechaFin?: string;
     minutosRegulares: string;
-    minutosNoRegulares?: string
+    minutosNoRegulares?: string;
     proyecto: string;
     requerimiento: string;
     categoria: string;
     tipoHora: string;
     descripcion: string;
     hora: string;
+    horaEjecucion?: string; // Formato "HH:mm" (ej: "16:17", "18:00")
     id?: number[];
 }
 
@@ -38,14 +39,43 @@ export const tareo: TareoData[] = [
         correo: "alfonso.rios@materiagris.pe",
         password: defaultPassword,
         fecha: ['2 de septiembre de 2026'],
-        fechaInicio: '2 de septiembre de 2026',
-        minutosRegulares: "476",
+        fechaInicio: '1 de septiembre de 2026',
+        minutosRegulares: "15",
         proyecto: "PRY - MG (CARLOS)",
         requerimiento: "RQ - CAPACITACIONES INTERNAS",
         categoria: "ASEGURAMIENTO DE LA CALIDAD",
         tipoHora: TipoHora.REGULAR,
-        descripcion: "PRUEBAS DE AUTOMATIZACIÓN",
+        descripcion: "PRUEBAS DE AUTOMATIZACIÓN DE EDICIÓN EN QA",
         hora: "18:01",
+        horaEjecucion: "14:09" // <-- Hora específica para este correo
+    },
+    {
+        correo: "cristhofer.aquino@materiagris.pe",
+        password: defaultPassword,
+        fecha: ['2 de septiembre de 2026'],
+        fechaInicio: '1 de septiembre de 2026',
+        minutosRegulares: "15",
+        proyecto: "PRY - MG (CARLOS)",
+        requerimiento: "RQ - CAPACITACIONES INTERNAS",
+        categoria: "ASEGURAMIENTO DE LA CALIDAD",
+        tipoHora: TipoHora.REGULAR,
+        descripcion: "PRUEBAS DE AUTOMATIZACIÓN EN QA",
+        hora: "18:01",
+        horaEjecucion: "14:10" // <-- Hora específica para este otro correo
+    },
+    {
+        correo: "laura.valera@materiagris.pe",
+        password: defaultPassword,
+        fecha: ['2 de septiembre de 2026'],
+        fechaInicio: '1 de septiembre de 2026',
+        minutosRegulares: "15",
+        proyecto: "PRY - MG (CARLOS)",
+        requerimiento: "RQ - CAPACITACIONES INTERNAS",
+        categoria: "ASEGURAMIENTO DE LA CALIDAD",
+        tipoHora: TipoHora.REGULAR,
+        descripcion: "PRUEBAS DE AUTOMATIZACIÓN EN QA",
+        hora: "18:01",
+        horaEjecucion: "14:15" // <-- Hora específica para este otro correo
     }
 ];
 
