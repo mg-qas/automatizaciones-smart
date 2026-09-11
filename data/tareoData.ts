@@ -47,7 +47,21 @@ export const tareo: TareoData[] = [
         tipoHora: TipoHora.REGULAR,
         descripcion: "PRUEBAS DE AUTOMATIZACIÓN DE EDICIÓN EN QA",
         hora: "18:01",
-        horaEjecucion: "14:09" // <-- Hora específica para este correo
+        horaEjecucion: "15:55" // <-- Hora específica para este correo
+    },
+    {
+        correo: "shirley.gonzales@materiagris.pe",
+        password: defaultPassword,
+        fecha: ['2 de septiembre de 2026'],
+        fechaInicio: '1 de septiembre de 2026',
+        minutosRegulares: "15",
+        proyecto: "PRY - MG (CARLOS)",
+        requerimiento: "RQ - CAPACITACIONES INTERNAS",
+        categoria: "ASEGURAMIENTO DE LA CALIDAD",
+        tipoHora: TipoHora.REGULAR,
+        descripcion: "PRUEBAS DE AUTOMATIZACIÓN EN QA",
+        hora: "18:01",
+        horaEjecucion: "15:56" // <-- Hora específica para este otro correo
     },
     {
         correo: "cristhofer.aquino@materiagris.pe",
@@ -60,11 +74,11 @@ export const tareo: TareoData[] = [
         categoria: "ASEGURAMIENTO DE LA CALIDAD",
         tipoHora: TipoHora.REGULAR,
         descripcion: "PRUEBAS DE AUTOMATIZACIÓN EN QA",
-        hora: "18:01",
-        horaEjecucion: "14:10" // <-- Hora específica para este otro correo
+        hora: "06:00",
+        horaEjecucion: "15:57" // <-- Hora específica para este otro correo
     },
     {
-        correo: "laura.valera@materiagris.pe",
+        correo: "kimberly.mendoza@materiagris.pe",
         password: defaultPassword,
         fecha: ['2 de septiembre de 2026'],
         fechaInicio: '1 de septiembre de 2026',
@@ -74,8 +88,8 @@ export const tareo: TareoData[] = [
         categoria: "ASEGURAMIENTO DE LA CALIDAD",
         tipoHora: TipoHora.REGULAR,
         descripcion: "PRUEBAS DE AUTOMATIZACIÓN EN QA",
-        hora: "18:01",
-        horaEjecucion: "14:15" // <-- Hora específica para este otro correo
+        hora: "06:01",
+        horaEjecucion: "15:58" // <-- Hora específica para este otro correo
     }
 ];
 

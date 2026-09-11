@@ -2,6 +2,7 @@ import { Page, Locator, expect } from '@playwright/test';
 import { CalendarComponent } from '@components';
 import { TareoData, TareoEliminado } from '@data/tareoData';
 
+
 export class TareoPage {
   readonly page: Page;
   private calendar: CalendarComponent;
@@ -167,6 +168,8 @@ async obtenerIdsVisiblesEnTabla(): Promise<number[]> {
   }
 }  */
 
+
+  /*
   async gestionarBotonCronometro(): Promise<string> {
   // 1. Verifica si el botón del toolbar está presente en pantalla
   const estaVisible = await this.btnPausar.isVisible({ timeout: 5000 }).catch(() => false);
@@ -206,9 +209,239 @@ async obtenerIdsVisiblesEnTabla(): Promise<number[]> {
     console.warn(" El botón se encuentra deshabilitado en este momento.");
     return "boton deshabilitado";
   }
+}*/
+
+/*
+async gestionarBotonCronometro(): Promise<string> {
+  // 1. Verifica la presencia del ícono dentro de mg-toolbar
+  const estaVisible = await this.btnPausar.isVisible({ timeout: 5000 }).catch(() => false);
+
+  if (!estaVisible) {
+    throw new Error("El botón del cronómetro (pause/play/stop) no se encuentra visible en 'mg-toolbar'.");
+  }
+
+  // 2. Localiza el contenedor del botón (botón o div padre interactivo)
+  const botonContenedor: Locator = this.btnPausar.locator('xpath=ancestor-or-self::*[self::button or contains(@class, "btn") or @role="button"][1]');
+  const contenedorExiste = await botonContenedor.count() > 0;
+  const objetivoEvaluar = contenedorExiste ? botonContenedor : this.btnPausar;
+
+  // 3. Evalúa si está realmente bloqueado/deshabilitado
+  const estaHabilitado = await objetivoEvaluar.isEnabled().catch(() => false);
+  const tieneClaseDisabled = await objetivoEvaluar.evaluate((el) => {
+    return (
+      el.classList.contains('disabled') ||
+      el.classList.contains('mat-button-disabled') ||
+      el.getAttribute('aria-disabled') === 'true' ||
+      window.getComputedStyle(el).pointerEvents === 'none'
+    );
+  }).catch(() => false);
+
+  if (!estaHabilitado || tieneClaseDisabled) {
+    throw new Error("El botón de marcación se encuentra BLOQUEADO / DESHABILITADO en la interfaz.");
+  }
+
+  // 4. Si está habilitado, obtiene el texto/ícono y realiza la acción
+  const textoActual = (await this.btnPausar.innerText()).replace(/\n/g, ' ').trim();
+  await objetivoEvaluar.click({ force: false });
+
+  // 5. Gestión del modal de tardanza
+  const apareceModalTardanza = await this.txtMotivoTardanza
+    .isVisible({ timeout: 3000 })
+    .catch(() => false);
+
+  if (apareceModalTardanza) {
+    await this.txtMotivoTardanza.fill('Ingrese tarde porque se me olvidó marcar');
+    await this.btnAceptarTardanza.click();
+    await expect(this.txtMotivoTardanza).toBeHidden();
+
+    return `Acción ejecutada con éxito: Clic en [${textoActual}] (Tardanza justificada)`;
+  }
+
+  return `Acción ejecutada con éxito: Clic en [${textoActual}]`;
+}*/
+
+/*
+async gestionarBotonCronometro(): Promise<string> {
+  // 1. Verifica la presencia del ícono dentro de mg-toolbar
+  const estaVisible = await this.btnPausar.isVisible({ timeout: 5000 }).catch(() => false);
+
+  if (!estaVisible) {
+    throw new Error("El botón del cronómetro (pause/play/stop) no se encuentra visible en 'mg-toolbar'.");
+  }
+
+  // 2. Localiza el contenedor del botón (botón o div padre interactivo)
+  const botonContenedor: Locator = this.btnPausar.locator('xpath=ancestor-or-self::*[self::button or contains(@class, "btn") or @role="button"][1]');
+  const contenedorExiste = await botonContenedor.count() > 0;
+  const objetivoEvaluar = contenedorExiste ? botonContenedor : this.btnPausar;
+
+  // 3. Evalúa si está realmente bloqueado/deshabilitado (por atributos, clases o color/opacidad)
+  const estaHabilitado = await objetivoEvaluar.isEnabled().catch(() => false);
+  const estaBloqueadoCss = await objetivoEvaluar.evaluate((el) => {
+    const styles = window.getComputedStyle(el);
+    const esOpaco = parseFloat(styles.opacity) < 0.8;
+    const sinEventos = styles.pointerEvents === 'none';
+    const tieneClaseDisabled = el.classList.contains('disabled') || 
+                               el.classList.contains('mat-button-disabled') ||
+                               el.getAttribute('aria-disabled') === 'true';
+
+    return esOpaco || sinEventos || tieneClaseDisabled;
+  }).catch(() => false);
+
+  if (!estaHabilitado || estaBloqueadoCss) {
+    throw new Error("El botón de marcación se encuentra BLOQUEADO / DESHABILITADO en la interfaz.");
+  }
+
+  // 4. Captura únicamente el texto/ícono del botón del cronómetro ANTES del clic
+  const textoAntesClic = (await this.btnPausar.innerText()).replace(/\n/g, ' ').trim();
+  
+  // Realiza el clic en el objetivo
+  await objetivoEvaluar.click({ force: false });
+
+  // 5. Gestión del modal de tardanza
+  const apareceModalTardanza = await this.txtMotivoTardanza
+    .isVisible({ timeout: 3000 })
+    .catch(() => false);
+
+  if (apareceModalTardanza) {
+    await this.txtMotivoTardanza.fill('Ingrese tarde porque se me olvidó marcar');
+    await this.btnAceptarTardanza.click();
+    await expect(this.txtMotivoTardanza).toBeHidden();
+
+    return `Acción ejecutada con éxito: Clic en [${textoAntesClic}] (Tardanza justificada)`;
+  }
+
+  // 6. Validar que solo el contenido del botón del cronómetro haya cambiado
+  await this.page.waitForTimeout(1500);
+  const textoDespuesClic = (await this.btnPausar.innerText()).replace(/\n/g, ' ').trim();
+
+  if (textoAntesClic === textoDespuesClic) {
+    throw new Error(`El clic se ejecutó pero la marcación no impactó en el sistema. El botón se mantuvo en: [${textoAntesClic}]`);
+  }
+
+  return `Acción ejecutada con éxito: Clic en [${textoAntesClic}] (Transicionó a [${textoDespuesClic}])`;
+}
+*/
+
+
+
+async gestionarBotonCronometro(): Promise<string> {
+  const estaVisible = await this.btnPausar.isVisible({ timeout: 5000 }).catch(() => false);
+
+  if (!estaVisible) {
+    throw new Error("El botón del cronómetro no se encuentra visible en 'mg-toolbar'.");
+  }
+
+  const botonContenedor: Locator = this.btnPausar.locator('xpath=ancestor-or-self::*[self::button or contains(@class, "btn") or @role="button"][1]');
+  const contenedorExiste = await botonContenedor.count() > 0;
+  const objetivoEvaluar = contenedorExiste ? botonContenedor : this.btnPausar;
+
+  // Evaluaciones de estado deshabilitado/bloqueado
+  const estaHabilitado = await objetivoEvaluar.isEnabled().catch(() => false);
+  const estaBloqueadoCss = await objetivoEvaluar.evaluate((el) => {
+    const styles = window.getComputedStyle(el);
+    const esOpaco = parseFloat(styles.opacity) < 0.8;
+    const sinEventos = styles.pointerEvents === 'none';
+    const tieneClaseDisabled = el.classList.contains('disabled') || 
+                               el.classList.contains('mat-button-disabled') ||
+                               el.getAttribute('aria-disabled') === 'true';
+
+    return esOpaco || sinEventos || tieneClaseDisabled;
+  }).catch(() => false);
+
+  if (!estaHabilitado || estaBloqueadoCss) {
+    throw new Error("El botón de marcación se encuentra BLOQUEADO / DESHABILITADO en la interfaz.");
+  }
+
+  const textoAntesClic = (await this.btnPausar.innerText()).replace(/\n/g, ' ').trim();
+  
+  await objetivoEvaluar.click({ force: false });
+
+  // 1. Detectar si el sistema lanza la alerta de error (--:--) tras el clic
+  const errorRelojVisible = await this.page.locator('mg-toolbar').getByText('error').isVisible({ timeout: 2000 }).catch(() => false);
+  if (errorRelojVisible) {
+    throw new Error("El sistema rechazó la marcación (Muestra alerta de error '--:--' por marcas/faltas pendientes).");
+  }
+
+  // 2. Gestión del modal de tardanza
+  const apareceModalTardanza = await this.txtMotivoTardanza
+    .isVisible({ timeout: 3000 })
+    .catch(() => false);
+
+  if (apareceModalTardanza) {
+    await this.txtMotivoTardanza.fill('Ingrese tarde porque se me olvidó marcar');
+    await this.btnAceptarTardanza.click();
+    await expect(this.txtMotivoTardanza).toBeHidden();
+
+    return `Marcación ejecutada: [${textoAntesClic}] (Tardanza justificada)`;
+  }
+
+  // 3. Confirmar la transición de texto/ícono
+  await this.page.waitForTimeout(1500);
+  const textoDespuesClic = (await this.btnPausar.innerText()).replace(/\n/g, ' ').trim();
+
+  if (textoAntesClic === textoDespuesClic) {
+    throw new Error(`El clic se realizó pero la marcación no cambió el estado del botón. Permaneció en: [${textoAntesClic}]`);
+  }
+
+  return `Marcación exitosa: Transicionó de [${textoAntesClic}] a [${textoDespuesClic}]`;
 }
 
 
+
+
+
+
+
+/*
+async gestionarBotonCronometro(): Promise<string> {
+  // 1. Verifica la presencia del ícono dentro de mg-toolbar
+  const estaVisible = await this.btnPausar.isVisible({ timeout: 5000 }).catch(() => false);
+
+  if (!estaVisible) {
+    throw new Error("El botón del cronómetro (pause/play/stop) no se encuentra visible en 'mg-toolbar'.");
+  }
+
+  // 2. Localiza el contenedor del botón (botón o div padre interactivo)
+  const botonContenedor: Locator = this.btnPausar.locator('xpath=ancestor-or-self::*[self::button or contains(@class, "btn") or @role="button"][1]');
+  const contenedorExiste = await botonContenedor.count() > 0;
+  const objetivoEvaluar = contenedorExiste ? botonContenedor : this.btnPausar;
+
+  // 3. Evalúa si está realmente bloqueado/deshabilitado
+  const estaHabilitado = await objetivoEvaluar.isEnabled().catch(() => false);
+  const tieneClaseDisabled = await objetivoEvaluar.evaluate((el) => {
+    return (
+      el.classList.contains('disabled') ||
+      el.classList.contains('mat-button-disabled') ||
+      el.getAttribute('aria-disabled') === 'true' ||
+      window.getComputedStyle(el).pointerEvents === 'none'
+    );
+  }).catch(() => false);
+
+  if (!estaHabilitado || tieneClaseDisabled) {
+    throw new Error("El botón de marcación se encuentra BLOQUEADO / DESHABILITADO en la interfaz.");
+  }
+
+  // 4. Si está habilitado, obtiene el texto/ícono y realiza la acción
+  const textoActual = (await this.btnPausar.innerText()).replace(/\n/g, ' ').trim();
+  await objetivoEvaluar.click({ force: false });
+
+  // 5. Gestión del modal de tardanza
+  const apareceModalTardanza = await this.txtMotivoTardanza
+    .isVisible({ timeout: 3000 })
+    .catch(() => false);
+
+  if (apareceModalTardanza) {
+    await this.txtMotivoTardanza.fill('Ingrese tarde porque se me olvidó marcar');
+    await this.btnAceptarTardanza.click();
+    await expect(this.txtMotivoTardanza).toBeHidden();
+
+    return `Acción ejecutada con éxito: Clic en [${textoActual}] (Tardanza justificada)`;
+  }
+
+  return `Acción ejecutada con éxito: Clic en [${textoActual}]`;
+}
+
+*/
 
 
 
